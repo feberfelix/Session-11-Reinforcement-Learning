@@ -1,0 +1,496 @@
+## What did we learn so far?
+
+Throughout the course, we explored two main paradigms:
+
+. . .
+
+:::: {.columns}
+::: {.column width="50%"}
+**Supervised Learning** *(Sessions 1-9)*:
+
+. . .
+  
+- **Data:** Features $X$ with labels $Y$
+
+. . .
+
+- **Goal:** Minimize prediction error 
+
+. . .
+
+- **Feedback:** *Instructive* (exact correct answer is given)
+:::
+
+. . .
+
+::: {.column width="50%"}
+**Unsupervised Learning** *(Session 10)*:
+
+. . .
+
+- **Data:** Features $X$ only (no labels)
+
+. . .
+
+- **Goal:** Find hidden structures
+
+. . .
+
+- **Feedback:** *None*
+:::
+::::
+
+## Today: **Reinforcement Learning (RL)**  
+A third, distinct paradigm focused on *learning by interacting*.
+
+## What Makes RL Different?
+
+In RL, we move away from static datasets towards **sequential decision-making**.
+
+. . .
+
+- **No static dataset:** The algorithm (the *Agent*) generates its own data by interacting with an *Environment*.
+
+. . .
+
+- **Evaluative Feedback:** The agent is not told which action is best. It only receives a reward/penalty.
+
+. . .
+
+- **Delayed Consequences:** Actions taken now might yield rewards much later.
+
+. . .
+
+- **Exploration vs. Exploitation:** The fundamental trade-off between trying unknown actions and utilizing known, rewarding actions.
+
+## Real-World Applications
+
+Why do we care about RL in economics and beyond?
+
+. . .
+
+- **Game Playing:** AlphaGo or superhuman performance in video games.
+
+. . .
+
+- **Robotics:** Teaching robots to walk without explicit programming.
+
+. . .
+
+- **Finance & Economics:** 
+  - Dynamic pricing strategies.
+  - Algorithmic trading and portfolio management.
+
+. . .
+
+- **Recommendation Systems:** Maximizing long-term engagement rather than just the next click.
+
+## What is Reinforcement Learning?
+
+- **Basically:** Reinforcement learning is about an agent **learning by doing**.
+
+. . .
+
+- The agent is not told what to do but learns the best solution by taking **actions** and getting **rewards**. 
+
+. . .
+
+- The agent tries to **maximize the sum of all rewards** it gets over time.
+
+. . .
+
+- The data is **not labeled**. The agent learns entirely from the consequences of its actions.
+
+## Two Key Characteristics of RL
+
+1. **Trial-and-Error**
+   
+   . . .
+   
+   - **No instructions** = actively **exploring** and **trying different actions** is needed to discover the highest rewards.
+   
+   . . .
+
+   - **Randomness** in taking actions is needed!
+
+. . .
+
+2. **Delayed Rewards**
+   
+   . . .
+
+   - **Actions have consequences!**
+   
+   . . .
+   
+   - An action might yield a big reward now but reduce all future rewards. 
+   
+   . . .
+   
+   - The agent must learn to think **long-term**.
+   
+   . . .
+   
+   - Highest long-term **value** $\neq$ highest short-term **reward**.
+
+## Example: The Gridworld Robot
+
+**The Interaction:**
+1. Observe **state** $s_t$ $\rightarrow$ 2. Choose **action** $a_t$ $\rightarrow$ 3. Receive **reward** $r_t$ $\rightarrow$ 4. Enter **new state** $s_{t+1}$
+
+![Start](images/Robot%20grid%20example%20start.png){fig-align="center" width="60%"}
+
+## The Agent-Environment Loop
+
+**The Interaction:**
+1. **Observe state $s_t$** $\rightarrow$ 2. Choose action $a_t$ $\rightarrow$ 3. Receive reward $r_t$ $\rightarrow$ 4. Enter new state $s_{t+1}$
+
+![States](images/Robot%20grid%20example%20states.png){fig-align="center" width="60%"}
+
+## The Agent-Environment Loop
+
+**The Interaction:**
+1. Observe state $s_t$ $\rightarrow$ 2. **Choose action $a_t$** $\rightarrow$ 3. Receive reward $r_t$ $\rightarrow$ 4. Enter new state $s_{t+1}$
+
+![Actions](images/Robot%20grid%20example%20actions.png){fig-align="center" width="60%"}
+
+## The Agent-Environment Loop
+
+**The Interaction:**
+1. Observe state $s_t$ $\rightarrow$ 2. Choose action $a_t$ $\rightarrow$ 3. **Receive reward $r_t$ & Enter new state $s_{t+1}$**
+
+![New State](images/Robot%20grid%20example%20state%202.png){fig-align="center" width="60%"}
+
+## What is a Markov Decision Process (MDP)?
+
+. . .
+
+A **Markov Decision Process** is the mathematical framework that describes how a system changes as actions are applied.
+
+. . .
+
+It consists of 4 components:
+
+. . .
+
+1. **States ($S$)**
+    
+. . .
+    
+2. **Actions ($A$)**
+    
+. . .
+
+3. **Transition function ($T$)**
+    
+. . .
+    
+4. **Rewards ($R$)**
+
+## 1. Component: States & 2. Component: Actions
+
+**States ($S$)**
+
+. . .
+
+- In our example: states = grid positions (e.g., upper left tile)
+
+. . .
+
+- All possible states make up the **state space**, where $s \in S$.
+
+. . .
+
+**Actions ($A$)**
+
+. . .
+
+- In our example: actions = robot's moves (e.g., left, right, up, down)
+
+. . .
+
+- All possible actions make up the **action space**, where $a \in A$.
+
+## What is the Markov assumption?
+
+The Markov assumption requires the next state $s_{t+1}$ to **only** be dependent on the current state $s_t$ and not any states or actions in the past.
+
+. . .
+
+*Wait, but what if our robot has wheels and momentum?*
+
+. . .
+
+- Its next position would depend on its current action AND its previous velocity (dependent on time between $s_t$ and $s_{t-1}$).
+
+. . .
+
+- State $s_{t+1}$ would then be: $s_{t+1}=\text{some function }(s_t,a_t,s_{t-1})$
+
+. . .
+
+**Since $s_{t+1}$ depends on $s_{t}$ AND $s_{t-1}$, this violates the Markov assumption!**
+
+## Is the Markov assumption too rigid?
+
+No, because we can circumvent it!
+
+. . .
+
+- In our example, we could simply redefine our state to contain all necessary history.
+
+. . .
+
+- We use a tuple $(location_t, velocity_t)$ to describe our current state $s_t$.
+
+. . .
+
+- Now the next state $s_{t+1}$ is again *only* dependent on the current state $s_t$.
+
+## 3. Component: Transition function
+
+- We don't know **exactly** how the robot moves (*Randomness is important!*)
+
+. . .
+
+- If the robot takes the action "go forward", there is a small probability it might slip to the left.
+
+. . .
+
+- We model this by defining a **transition function**:
+$$T(s,a,s') = P(s'|s,a)$$
+
+. . .
+
+- *Because the transition function is a probability distribution:*
+$$\sum_{s' \in S} T(s,a,s') = 1 \quad \text{for all } s \in S \text{ and } a \in A$$
+
+## 4. Component: Rewards
+
+The formalized concept of a reward is a function mapping states and actions to a real number:
+$$r: S \times A \rightarrow \mathbb{R}$$
+
+. . .
+
+- In our example: the robot gets a reward $r(s,a)$ for its moves.
+
+. . .
+
+- Large $r(s,a)$ = good move, small/negative $r(s,a)$ = bad move.
+
+. . .
+
+- *Important: The reward is designed with the goal in mind!*
+
+## Let's put everything together!
+
+The robot starts at a state $s_0$, takes an action $a_0$, and gets a reward $r_1$.
+
+. . .
+
+We track everything in a **trajectory**:
+$$\tau = (s_0, a_0, r_1, s_1, a_1, r_2, s_2, a_2, r_3, \dots)$$
+
+. . .
+
+**What is the goal?**
+To find a trajectory with the largest overall sum of rewards, called the **return**:
+$$R(\tau) = r_1 + r_2 + r_3 + \dots$$
+
+## Rewards vs. Values
+
+. . .
+
+:::: {.columns}
+::: {.column width="50%"}
+**Rewards**
+
+. . .
+
+- Immediate, situational feedback
+
+. . .
+
+- *Example:* Stepping on a trap gives an instant penalty.
+:::
+
+. . .
+
+::: {.column width="50%"}
+**Values**
+
+. . .
+
+- The long-term perspective
+
+. . .
+
+- *Example:* Taking a small immediate penalty might be worth it if it unlocks a massive reward later.
+:::
+::::
+
+## Introducing the **Discount Factor $\gamma$**
+
+*What if the robot never stops moving? The sum of rewards would be infinite.*
+
+. . .
+
+We introduce the **Discount Factor ($\gamma$)**, a value between 0 and 1, to determine the present value of future rewards.
+
+. . .
+
+We get the **discounted return**:
+$$G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots = \sum_{k=0}^\infty \gamma^k r_{t+k+1}$$
+
+. . .
+
+- If $\gamma \to 0$: *Myopic* (only cares about immediate rewards)
+
+. . .
+
+- If $\gamma \to 1$: *Farsighted* (cares about long-term success)
+
+## The Recursive Nature of Returns
+
+How are returns in successive time steps related? 
+
+. . .
+
+We can factor out the discount rate $\gamma$:
+
+$$
+\begin{aligned} 
+G_t &= r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \gamma^3 r_{t+4} + \dots \\     
+    &= r_{t+1} + \gamma (r_{t+2} + \gamma r_{t+3} + \gamma^2 r_{t+4} + \dots) \\     
+    &= r_{t+1} + \gamma G_{t+1} 
+\end{aligned}
+$$
+
+. . .
+
+This algebraic trick is the most important mathematical property in RL. It allows the agent to look just **one step ahead**.
+
+## The Three Main Families of RL Methods
+
+. . .
+
+1. **Dynamic Programming (DP)**
+
+. . .
+
+2. **Monte Carlo (MC) Methods**
+
+. . .
+
+3. **Temporal-Difference (TD) Learning**
+
+## 1. Dynamic Programming (DP)
+
+. . .
+
+::: {.callout-important title="Requirement"}
+DP requires a **perfect mathematical model** of the environment.
+:::
+
+. . .
+
+- DP requires a **finite MDP** (finite states, actions, rewards, and known transition probabilities $P(s',r|s,a)$).
+
+. . .
+
+- **Bootstrapping:** Updates current estimates based on the estimates of future states.
+
+. . .
+
+- *Reality:* Requires too much computational power and perfect knowledge $\rightarrow$ rarely used directly in practice, but forms the theoretical foundation.
+
+## 2. Monte Carlo (MC) Learning
+
+. . .
+
+::: {.callout-note title="Requirement"}
+MC learns purely from **raw experience** by playing complete episodes.
+:::
+
+. . .
+
+- **Model-Free:** Needs zero prior knowledge of the environment's "laws of physics".
+
+. . .
+
+- It calculates the total actual return at the very *end* of an episode, then averages those returns for the visited states.
+
+. . .
+
+- *No Bootstrapping:* It doesn't update its guesses based on other guesses.
+
+## 3. Temporal-Difference (TD)
+
+. . .
+
+*The most widely used fundamental concept in RL.*
+
+. . .
+
+- **Model-Free (like MC):** Learns entirely from experience.
+
+. . .
+
+- **Bootstrapping (like DP):** Updates estimates step-by-step on the fly.
+
+. . .
+
+- It does not wait for the episode to end to learn something new.
+
+## TD in Action: Q-Learning
+
+Q-Learning evaluates specific **State-Action pairs (Q-values)**:
+*"How good is it to take this action $a$ in this state $s$?"*
+
+. . .
+
+**The Update Rule:**
+$$Q(s,a) \leftarrow Q(s,a) + \alpha \left[ \underbrace{r + \gamma \max_{a'} Q(s', a')}_{\text{Target}} - \underbrace{Q(s,a)}_{\text{Old Estimate}} \right]$$
+
+. . .
+
+**What does this mean?**
+
+. . .
+
+- $\alpha$: **Learning rate** (how strongly we overwrite old info).
+
+. . .
+
+- $\max_{a'} Q(s', a')$: We assume we will take the **best possible action** in the next step.
+
+. . .
+
+- The brackets $[ \dots ]$: The **"Surprise" or Error** (Difference between what we actually experienced vs. what we expected).
+
+## Summary: Comparing the Methods
+
+| Method | Model Needed? | Bootstraps? | Update Frequency |
+|--------|:---:|:---:|---|
+| **DP** | Yes | Yes | Before taking real action |
+| **MC** | No | No | At the end of an episode |
+| **TD**| No | Yes | After every single step |
+
+## Bridging the Gap: Deep Reinforcement Learning
+
+*What happens if our state space gets too large?*  
+(e.g., millions of different pixel combinations in a video game)
+
+. . .
+
+A simple table for $Q(s,a)$ is no longer possible!
+
+. . .
+
+**The Solution:**  
+We use the **Deep Learning networks** you learned about in Sessions 5-9 to estimate these Q-Values instead of a table. 
+
+. . .
+
+$\rightarrow$ This is called **Deep Reinforcement Learning**!
+
