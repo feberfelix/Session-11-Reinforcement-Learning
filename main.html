@@ -144,11 +144,542 @@ Julian Mensak &amp; Felix Feber
 </div>
 
 </section>
+<section>
 <section id="introduction-to-reinforcement-learning" class="title-slide slide level1 center">
 <h1>Introduction to Reinforcement Learning</h1>
 
 </section>
+<section id="what-did-we-learn-so-far" class="slide level2 smaller">
+<h2>What did we learn so far?</h2>
+<p>Throughout the course, we explored two main paradigms:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Supervised Learning</strong> <em>(Sessions 1-9)</em>:</p>
+<ul>
+<li><strong>Data:</strong> Features <span class="math inline">\(X\)</span> with labels <span class="math inline">\(Y\)</span></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Goal:</strong> Minimize prediction error</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Feedback:</strong> <em>Instructive</em> (exact correct answer is given)</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Unsupervised Learning</strong> <em>(Session 10)</em>:</p>
+<ul>
+<li><strong>Data:</strong> Features <span class="math inline">\(X\)</span> only (no labels)</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Goal:</strong> Find hidden structures</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Feedback:</strong> <em>None</em></li>
+</ul>
+</div></div>
+</section>
+<section id="today-reinforcement-learning-rl" class="slide level2">
+<h2>Today: <strong>Reinforcement Learning (RL)</strong></h2>
+<p>A third, distinct paradigm focused on <em>learning by interacting</em>.</p>
+</section>
+<section id="what-makes-rl-different" class="slide level2 smaller">
+<h2>What Makes RL Different?</h2>
+<p>In RL, we move away from static datasets towards <strong>sequential decision-making</strong>.</p>
+<div class="fragment">
+<ul>
+<li><strong>No static dataset:</strong> The algorithm (the <em>Agent</em>) generates its own data by interacting with an <em>Environment</em>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Evaluative Feedback:</strong> The agent is not told which action is best. It only receives a reward/penalty.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Delayed Consequences:</strong> Actions taken now might yield rewards much later.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Exploration vs.&nbsp;Exploitation:</strong> The fundamental trade-off between trying unknown actions and utilizing known, rewarding actions.</li>
+</ul>
+</div>
+</section>
+<section id="real-world-applications" class="slide level2 smaller">
+<h2>Real-World Applications</h2>
+<p>Why do we care about RL in economics and beyond?</p>
+<div class="fragment">
+<ul>
+<li><strong>Game Playing:</strong> AlphaGo or superhuman performance in video games.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Robotics:</strong> Teaching robots to walk without explicit programming.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Finance &amp; Economics:</strong>
+<ul>
+<li>Dynamic pricing strategies.</li>
+<li>Algorithmic trading and portfolio management.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Recommendation Systems:</strong> Maximizing long-term engagement rather than just the next click.</li>
+</ul>
+</div>
+</section>
+<section id="what-is-reinforcement-learning" class="slide level2">
+<h2>What is Reinforcement Learning?</h2>
+<ul>
+<li><strong>Basically:</strong> Reinforcement learning is about an agent <strong>learning by doing</strong>.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>The agent is not told what to do but learns the best solution by taking <strong>actions</strong> and getting <strong>rewards</strong>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>The agent tries to <strong>maximize the sum of all rewards</strong> it gets over time.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>The data is <strong>not labeled</strong>. The agent learns entirely from the consequences of its actions.</li>
+</ul>
+</div>
+</section>
+<section id="two-key-characteristics-of-rl" class="slide level2 smaller">
+<h2>Two Key Characteristics of RL</h2>
+<ol type="1">
+<li><p><strong>Trial-and-Error</strong></p>
+<ul>
+<li><strong>No instructions</strong> = actively <strong>exploring</strong> and <strong>trying different actions</strong> is needed to discover the highest rewards.</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Randomness</strong> in taking actions is needed!</li>
+</ul></li>
+<li><p><strong>Delayed Rewards</strong></p>
+<ul>
+<li><strong>Actions have consequences!</strong></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>An action might yield a big reward now but reduce all future rewards.</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>The agent must learn to think <strong>long-term</strong>.</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Highest long-term <strong>value</strong> <span class="math inline">\(\neq\)</span> highest short-term <strong>reward</strong>.</li>
+</ul></li>
+</ol>
+</section>
+<section id="example-the-gridworld-robot" class="slide level2">
+<h2>Example: The Gridworld Robot</h2>
+<p><strong>The Interaction:</strong> 1. Observe <strong>state</strong> <span class="math inline">\(s_t\)</span> <span class="math inline">\(\rightarrow\)</span> 2. Choose <strong>action</strong> <span class="math inline">\(a_t\)</span> <span class="math inline">\(\rightarrow\)</span> 3. Receive <strong>reward</strong> <span class="math inline">\(r_t\)</span> <span class="math inline">\(\rightarrow\)</span> 4. Enter <strong>new state</strong> <span class="math inline">\(s_{t+1}\)</span></p>
 
+<img data-src="images/Robot%20grid%20example%20start.png" style="width:60.0%" class="r-stretch quarto-figure-center"><p class="caption">Start</p></section>
+<section id="the-agent-environment-loop" class="slide level2">
+<h2>The Agent-Environment Loop</h2>
+<p><strong>The Interaction:</strong> 1. <strong>Observe state <span class="math inline">\(s_t\)</span></strong> <span class="math inline">\(\rightarrow\)</span> 2. Choose action <span class="math inline">\(a_t\)</span> <span class="math inline">\(\rightarrow\)</span> 3. Receive reward <span class="math inline">\(r_t\)</span> <span class="math inline">\(\rightarrow\)</span> 4. Enter new state <span class="math inline">\(s_{t+1}\)</span></p>
+
+<img data-src="images/Robot%20grid%20example%20states.png" style="width:60.0%" class="r-stretch quarto-figure-center"><p class="caption">States</p></section>
+<section id="the-agent-environment-loop-1" class="slide level2">
+<h2>The Agent-Environment Loop</h2>
+<p><strong>The Interaction:</strong> 1. Observe state <span class="math inline">\(s_t\)</span> <span class="math inline">\(\rightarrow\)</span> 2. <strong>Choose action <span class="math inline">\(a_t\)</span></strong> <span class="math inline">\(\rightarrow\)</span> 3. Receive reward <span class="math inline">\(r_t\)</span> <span class="math inline">\(\rightarrow\)</span> 4. Enter new state <span class="math inline">\(s_{t+1}\)</span></p>
+
+<img data-src="images/Robot%20grid%20example%20actions.png" style="width:60.0%" class="r-stretch quarto-figure-center"><p class="caption">Actions</p></section>
+<section id="the-agent-environment-loop-2" class="slide level2">
+<h2>The Agent-Environment Loop</h2>
+<p><strong>The Interaction:</strong> 1. Observe state <span class="math inline">\(s_t\)</span> <span class="math inline">\(\rightarrow\)</span> 2. Choose action <span class="math inline">\(a_t\)</span> <span class="math inline">\(\rightarrow\)</span> 3. <strong>Receive reward <span class="math inline">\(r_t\)</span> &amp; Enter new state <span class="math inline">\(s_{t+1}\)</span></strong></p>
+
+<img data-src="images/Robot%20grid%20example%20state%202.png" style="width:60.0%" class="r-stretch quarto-figure-center"><p class="caption">New State</p></section>
+<section id="what-is-a-markov-decision-process-mdp" class="slide level2 smaller">
+<h2>What is a Markov Decision Process (MDP)?</h2>
+<div class="fragment">
+<p>A <strong>Markov Decision Process</strong> is the mathematical framework that describes how a system changes as actions are applied.</p>
+</div>
+<div class="fragment">
+<p>It consists of 4 components:</p>
+</div>
+<div class="fragment">
+<ol type="1">
+<li><strong>States (<span class="math inline">\(S\)</span>)</strong></li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="2" type="1">
+<li><strong>Actions (<span class="math inline">\(A\)</span>)</strong></li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="3" type="1">
+<li><strong>Transition function (<span class="math inline">\(T\)</span>)</strong></li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="4" type="1">
+<li><strong>Rewards (<span class="math inline">\(R\)</span>)</strong></li>
+</ol>
+</div>
+</section>
+<section id="component-states-2.-component-actions" class="slide level2 smaller">
+<h2>1. Component: States &amp; 2. Component: Actions</h2>
+<p><strong>States (<span class="math inline">\(S\)</span>)</strong></p>
+<div class="fragment">
+<ul>
+<li>In our example: states = grid positions (e.g., upper left tile)</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>All possible states make up the <strong>state space</strong>, where <span class="math inline">\(s \in S\)</span>.</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Actions (<span class="math inline">\(A\)</span>)</strong></p>
+</div>
+<div class="fragment">
+<ul>
+<li>In our example: actions = robot’s moves (e.g., left, right, up, down)</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>All possible actions make up the <strong>action space</strong>, where <span class="math inline">\(a \in A\)</span>.</li>
+</ul>
+</div>
+</section>
+<section id="what-is-the-markov-assumption" class="slide level2 smaller">
+<h2>What is the Markov assumption?</h2>
+<p>The Markov assumption requires the next state <span class="math inline">\(s_{t+1}\)</span> to <strong>only</strong> be dependent on the current state <span class="math inline">\(s_t\)</span> and not any states or actions in the past.</p>
+<div class="fragment">
+<p><em>Wait, but what if our robot has wheels and momentum?</em></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Its next position would depend on its current action AND its previous velocity (dependent on time between <span class="math inline">\(s_t\)</span> and <span class="math inline">\(s_{t-1}\)</span>).</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>State <span class="math inline">\(s_{t+1}\)</span> would then be: <span class="math inline">\(s_{t+1}=\text{some function }(s_t,a_t,s_{t-1})\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Since <span class="math inline">\(s_{t+1}\)</span> depends on <span class="math inline">\(s_{t}\)</span> AND <span class="math inline">\(s_{t-1}\)</span>, this violates the Markov assumption!</strong></p>
+</div>
+</section>
+<section id="is-the-markov-assumption-too-rigid" class="slide level2">
+<h2>Is the Markov assumption too rigid?</h2>
+<p>No, because we can circumvent it!</p>
+<div class="fragment">
+<ul>
+<li>In our example, we could simply redefine our state to contain all necessary history.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>We use a tuple <span class="math inline">\((location_t, velocity_t)\)</span> to describe our current state <span class="math inline">\(s_t\)</span>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Now the next state <span class="math inline">\(s_{t+1}\)</span> is again <em>only</em> dependent on the current state <span class="math inline">\(s_t\)</span>.</li>
+</ul>
+</div>
+</section>
+<section id="component-transition-function" class="slide level2 smaller">
+<h2>3. Component: Transition function</h2>
+<ul>
+<li>We don’t know <strong>exactly</strong> how the robot moves (<em>Randomness is important!</em>)</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>If the robot takes the action “go forward”, there is a small probability it might slip to the left.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>We model this by defining a <strong>transition function</strong>: <span class="math display">\[T(s,a,s') = P(s'|s,a)\]</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><em>Because the transition function is a probability distribution:</em> <span class="math display">\[\sum_{s' \in S} T(s,a,s') = 1 \quad \text{for all } s \in S \text{ and } a \in A\]</span></li>
+</ul>
+</div>
+</section>
+<section id="component-rewards" class="slide level2">
+<h2>4. Component: Rewards</h2>
+<p>The formalized concept of a reward is a function mapping states and actions to a real number: <span class="math display">\[r: S \times A \rightarrow \mathbb{R}\]</span></p>
+<div class="fragment">
+<ul>
+<li>In our example: the robot gets a reward <span class="math inline">\(r(s,a)\)</span> for its moves.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Large <span class="math inline">\(r(s,a)\)</span> = good move, small/negative <span class="math inline">\(r(s,a)\)</span> = bad move.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><em>Important: The reward is designed with the goal in mind!</em></li>
+</ul>
+</div>
+</section>
+<section id="lets-put-everything-together" class="slide level2">
+<h2>Let’s put everything together!</h2>
+<p>The robot starts at a state <span class="math inline">\(s_0\)</span>, takes an action <span class="math inline">\(a_0\)</span>, and gets a reward <span class="math inline">\(r_1\)</span>.</p>
+<div class="fragment">
+<p>We track everything in a <strong>trajectory</strong>: <span class="math display">\[\tau = (s_0, a_0, r_1, s_1, a_1, r_2, s_2, a_2, r_3, \dots)\]</span></p>
+</div>
+<div class="fragment">
+<p><strong>What is the goal?</strong> To find a trajectory with the largest overall sum of rewards, called the <strong>return</strong>: <span class="math display">\[R(\tau) = r_1 + r_2 + r_3 + \dots\]</span></p>
+</div>
+</section>
+<section id="rewards-vs.-values" class="slide level2 smaller">
+<h2>Rewards vs.&nbsp;Values</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Rewards</strong></p>
+<ul>
+<li>Immediate, situational feedback</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><em>Example:</em> Stepping on a trap gives an instant penalty.</li>
+</ul>
+</div><p>. . .</p><div class="column" style="width:50%;">
+<p><strong>Values</strong></p>
+<ul>
+<li>The long-term perspective</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><em>Example:</em> Taking a small immediate penalty might be worth it if it unlocks a massive reward later.</li>
+</ul>
+</div></div>
+</section>
+<section id="introducing-the-discount-factor-gamma" class="slide level2 smaller">
+<h2>Introducing the <strong>Discount Factor <span class="math inline">\(\gamma\)</span></strong></h2>
+<p><em>What if the robot never stops moving? The sum of rewards would be infinite.</em></p>
+<div class="fragment">
+<p>We introduce the <strong>Discount Factor (<span class="math inline">\(\gamma\)</span>)</strong>, a value between 0 and 1, to determine the present value of future rewards.</p>
+</div>
+<div class="fragment">
+<p>We get the <strong>discounted return</strong>: <span class="math display">\[G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots = \sum_{k=0}^\infty \gamma^k r_{t+k+1}\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>If <span class="math inline">\(\gamma \to 0\)</span>: <em>Myopic</em> (only cares about immediate rewards)</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>If <span class="math inline">\(\gamma \to 1\)</span>: <em>Farsighted</em> (cares about long-term success)</li>
+</ul>
+</div>
+</section>
+<section id="the-recursive-nature-of-returns" class="slide level2">
+<h2>The Recursive Nature of Returns</h2>
+<p>How are returns in successive time steps related?</p>
+<div class="fragment">
+<p>We can factor out the discount rate <span class="math inline">\(\gamma\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+G_t &amp;= r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \gamma^3 r_{t+4} + \dots \\     
+    &amp;= r_{t+1} + \gamma (r_{t+2} + \gamma r_{t+3} + \gamma^2 r_{t+4} + \dots) \\     
+    &amp;= r_{t+1} + \gamma G_{t+1}
+\end{aligned}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>This algebraic trick is the most important mathematical property in RL. It allows the agent to look just <strong>one step ahead</strong>.</p>
+</div>
+</section>
+<section id="the-three-main-families-of-rl-methods" class="slide level2">
+<h2>The Three Main Families of RL Methods</h2>
+<div class="fragment">
+<ol type="1">
+<li><strong>Dynamic Programming (DP)</strong></li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="2" type="1">
+<li><strong>Monte Carlo (MC) Methods</strong></li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="3" type="1">
+<li><strong>Temporal-Difference (TD) Learning</strong></li>
+</ol>
+</div>
+</section>
+<section id="dynamic-programming-dp" class="slide level2 smaller">
+<h2>1. Dynamic Programming (DP)</h2>
+<div class="fragment">
+<div title="Requirement">
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Requirement</strong></p>
+</div>
+<div class="callout-content">
+<p>DP requires a <strong>perfect mathematical model</strong> of the environment.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>DP requires a <strong>finite MDP</strong> (finite states, actions, rewards, and known transition probabilities <span class="math inline">\(P(s',r|s,a)\)</span>).</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Bootstrapping:</strong> Updates current estimates based on the estimates of future states.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><em>Reality:</em> Requires too much computational power and perfect knowledge <span class="math inline">\(\rightarrow\)</span> rarely used directly in practice, but forms the theoretical foundation.</li>
+</ul>
+</div>
+</section>
+<section id="monte-carlo-mc-learning" class="slide level2">
+<h2>2. Monte Carlo (MC) Learning</h2>
+<div class="fragment">
+<div title="Requirement">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Requirement</strong></p>
+</div>
+<div class="callout-content">
+<p>MC learns purely from <strong>raw experience</strong> by playing complete episodes.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Model-Free:</strong> Needs zero prior knowledge of the environment’s “laws of physics”.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>It calculates the total actual return at the very <em>end</em> of an episode, then averages those returns for the visited states.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><em>No Bootstrapping:</em> It doesn’t update its guesses based on other guesses.</li>
+</ul>
+</div>
+</section>
+<section id="temporal-difference-td" class="slide level2">
+<h2>3. Temporal-Difference (TD)</h2>
+<div class="fragment">
+<p><em>The most widely used fundamental concept in RL.</em></p>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Model-Free (like MC):</strong> Learns entirely from experience.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Bootstrapping (like DP):</strong> Updates estimates step-by-step on the fly.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>It does not wait for the episode to end to learn something new.</li>
+</ul>
+</div>
+</section>
+<section id="td-in-action-q-learning" class="slide level2 smaller">
+<h2>TD in Action: Q-Learning</h2>
+<p>Q-Learning evaluates specific <strong>State-Action pairs (Q-values)</strong>: <em>“How good is it to take this action <span class="math inline">\(a\)</span> in this state <span class="math inline">\(s\)</span>?”</em></p>
+<p><strong>The Update Rule:</strong> <span class="math display">\[Q(s,a) \leftarrow Q(s,a) + \alpha \left[ \underbrace{r + \gamma \max_{a'} Q(s', a')}_{\text{Target}} - \underbrace{Q(s,a)}_{\text{Old Estimate}} \right]\]</span></p>
+<p><strong>What does this mean?</strong></p>
+<ul>
+<li><p><span class="math inline">\(\alpha\)</span>: <strong>Learning rate</strong> (how strongly we overwrite old info).</p></li>
+<li><p><span class="math inline">\(\max_{a'} Q(s', a')\)</span>: We assume we will take the <strong>best possible action</strong> in the next step.</p></li>
+<li><p>The brackets <span class="math inline">\([ \dots ]\)</span>: The <strong>“Surprise” or Error</strong> (Difference between what we actually experienced vs.&nbsp;what we expected).</p></li>
+</ul>
+</section>
+<section id="summary-comparing-the-methods" class="slide level2">
+<h2>Summary: Comparing the Methods</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th style="text-align: center;">Model Needed?</th>
+<th style="text-align: center;">Bootstraps?</th>
+<th>Update Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>DP</strong></td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td>Before taking real action</td>
+</tr>
+<tr class="even">
+<td><strong>MC</strong></td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">No</td>
+<td>At the end of an episode</td>
+</tr>
+<tr class="odd">
+<td><strong>TD</strong></td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">Yes</td>
+<td>After every single step</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bridging-the-gap-deep-reinforcement-learning" class="slide level2">
+<h2>Bridging the Gap: Deep Reinforcement Learning</h2>
+<p><em>What happens if our state space gets too large?</em><br>
+(e.g., millions of different pixel combinations in a video game)</p>
+<div class="fragment">
+<p>A simple table for <span class="math inline">\(Q(s,a)\)</span> is no longer possible!</p>
+</div>
+<div class="fragment">
+<p><strong>The Solution:</strong><br>
+We use the <strong>Deep Learning networks</strong> you learned about in Sessions 5-9 to estimate these Q-Values instead of a table.</p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(\rightarrow\)</span> This is called <strong>Deep Reinforcement Learning</strong>!</p>
+</div>
+</section></section>
 <section>
 <section id="section-2-value-functions-bellman-equations" class="title-slide slide level1 center">
 <h1>Section 2: Value Functions &amp; Bellman Equations</h1>

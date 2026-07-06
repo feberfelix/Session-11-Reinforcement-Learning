@@ -1,14 +1,12 @@
-## What did we learn so far?
+## What did we learn so far? {.smaller}
 
 Throughout the course, we explored two main paradigms:
 
-. . .
 
 :::: {.columns}
 ::: {.column width="50%"}
 **Supervised Learning** *(Sessions 1-9)*:
 
-. . .
   
 - **Data:** Features $X$ with labels $Y$
 
@@ -21,12 +19,10 @@ Throughout the course, we explored two main paradigms:
 - **Feedback:** *Instructive* (exact correct answer is given)
 :::
 
-. . .
 
 ::: {.column width="50%"}
 **Unsupervised Learning** *(Session 10)*:
 
-. . .
 
 - **Data:** Features $X$ only (no labels)
 
@@ -43,7 +39,7 @@ Throughout the course, we explored two main paradigms:
 ## Today: **Reinforcement Learning (RL)**  
 A third, distinct paradigm focused on *learning by interacting*.
 
-## What Makes RL Different?
+## What Makes RL Different? {.smaller}
 
 In RL, we move away from static datasets towards **sequential decision-making**.
 
@@ -63,7 +59,7 @@ In RL, we move away from static datasets towards **sequential decision-making**.
 
 - **Exploration vs. Exploitation:** The fundamental trade-off between trying unknown actions and utilizing known, rewarding actions.
 
-## Real-World Applications
+## Real-World Applications {.smaller}
 
 Why do we care about RL in economics and beyond?
 
@@ -101,11 +97,10 @@ Why do we care about RL in economics and beyond?
 
 - The data is **not labeled**. The agent learns entirely from the consequences of its actions.
 
-## Two Key Characteristics of RL
+## Two Key Characteristics of RL {.smaller}
 
 1. **Trial-and-Error**
    
-   . . .
    
    - **No instructions** = actively **exploring** and **trying different actions** is needed to discover the highest rewards.
    
@@ -113,11 +108,8 @@ Why do we care about RL in economics and beyond?
 
    - **Randomness** in taking actions is needed!
 
-. . .
-
 2. **Delayed Rewards**
    
-   . . .
 
    - **Actions have consequences!**
    
@@ -161,7 +153,7 @@ Why do we care about RL in economics and beyond?
 
 ![New State](images/Robot%20grid%20example%20state%202.png){fig-align="center" width="60%"}
 
-## What is a Markov Decision Process (MDP)?
+## What is a Markov Decision Process (MDP)? {.smaller}
 
 . . .
 
@@ -187,7 +179,7 @@ It consists of 4 components:
     
 4. **Rewards ($R$)**
 
-## 1. Component: States & 2. Component: Actions
+## 1. Component: States & 2. Component: Actions {.smaller}
 
 **States ($S$)**
 
@@ -211,7 +203,7 @@ It consists of 4 components:
 
 - All possible actions make up the **action space**, where $a \in A$.
 
-## What is the Markov assumption?
+## What is the Markov assumption? {.smaller}
 
 The Markov assumption requires the next state $s_{t+1}$ to **only** be dependent on the current state $s_t$ and not any states or actions in the past.
 
@@ -247,7 +239,7 @@ No, because we can circumvent it!
 
 - Now the next state $s_{t+1}$ is again *only* dependent on the current state $s_t$.
 
-## 3. Component: Transition function
+## 3. Component: Transition function {.smaller}
 
 - We don't know **exactly** how the robot moves (*Randomness is important!*)
 
@@ -297,15 +289,12 @@ $$\tau = (s_0, a_0, r_1, s_1, a_1, r_2, s_2, a_2, r_3, \dots)$$
 To find a trajectory with the largest overall sum of rewards, called the **return**:
 $$R(\tau) = r_1 + r_2 + r_3 + \dots$$
 
-## Rewards vs. Values
-
-. . .
+## Rewards vs. Values {.smaller}
 
 :::: {.columns}
 ::: {.column width="50%"}
 **Rewards**
 
-. . .
 
 - Immediate, situational feedback
 
@@ -319,7 +308,6 @@ $$R(\tau) = r_1 + r_2 + r_3 + \dots$$
 ::: {.column width="50%"}
 **Values**
 
-. . .
 
 - The long-term perspective
 
@@ -329,7 +317,7 @@ $$R(\tau) = r_1 + r_2 + r_3 + \dots$$
 :::
 ::::
 
-## Introducing the **Discount Factor $\gamma$**
+## Introducing the **Discount Factor $\gamma$** {.smaller}
 
 *What if the robot never stops moving? The sum of rewards would be infinite.*
 
@@ -384,7 +372,7 @@ This algebraic trick is the most important mathematical property in RL. It allow
 
 3. **Temporal-Difference (TD) Learning**
 
-## 1. Dynamic Programming (DP)
+## 1. Dynamic Programming (DP) {.smaller}
 
 . . .
 
@@ -442,29 +430,24 @@ MC learns purely from **raw experience** by playing complete episodes.
 
 - It does not wait for the episode to end to learn something new.
 
-## TD in Action: Q-Learning
+## TD in Action: Q-Learning {.smaller}
 
 Q-Learning evaluates specific **State-Action pairs (Q-values)**:
 *"How good is it to take this action $a$ in this state $s$?"*
 
-. . .
 
 **The Update Rule:**
 $$Q(s,a) \leftarrow Q(s,a) + \alpha \left[ \underbrace{r + \gamma \max_{a'} Q(s', a')}_{\text{Target}} - \underbrace{Q(s,a)}_{\text{Old Estimate}} \right]$$
 
-. . .
 
 **What does this mean?**
 
-. . .
 
 - $\alpha$: **Learning rate** (how strongly we overwrite old info).
 
-. . .
 
 - $\max_{a'} Q(s', a')$: We assume we will take the **best possible action** in the next step.
 
-. . .
 
 - The brackets $[ \dots ]$: The **"Surprise" or Error** (Difference between what we actually experienced vs. what we expected).
 
