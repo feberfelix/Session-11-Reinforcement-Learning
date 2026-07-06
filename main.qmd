@@ -1,0 +1,18 @@
+---
+title: "Introduction to Reinforcement Learning"
+subtitle: "Machine Learning for Economists"
+author: "Julian Mensak & Felix Feber"
+format: 
+  revealjs:
+    theme: sky
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    preview-links: true
+---
+
+# Introduction to Reinforcement Learning
+
+{{< include part1_Julian.qmd >}}
+
+{{< include part2_Felix.qmd >}}

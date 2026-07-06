@@ -1,0 +1,181 @@
+# Section 2: Value Functions & Bellman Equations
+
+## Beyond Immediate Rewards {.smaller}
+* **The Hand-off:** Julian concluded by mapping out the Reinforcement Learning framework using States ($S_t$), Actions ($A_t$), and Rewards ($R_t$).
+* **The Intertemporal Challenge:** Economists rarely evaluate choices based *only* on today's payoff.
+* *Economic Reality:* Consuming your entire wealth endowment today yields high immediate utility ($R_{t+1}$), but leaves you destitute tomorrow.
+* **The Goal of an RL Agent:** Maximize the *long-term accumulated return*, closely mirroring standard lifetime utility maximization in economic theory.
+
+## The Horizon and the Return ($G_t$) {.smaller}
+* Following the core textbook **Reinforcement Learning: An Introduction** (Sutton & Barto 2018), we formalize long-term value by defining the **Return ($G_t$)** as a function of the reward sequence received after time step $t$.
+* **Finite Horizon Tasks:** (e.g., an agent facing a multi-period lifecycle model terminating at a fixed period $T$)
+  $$G_t = R_{t+1} + R_{t+2} + \dots + R_T$$
+* **Infinite Horizon Tasks:** (e.g., infinite-lived representative firms or steady-state macroeconomic tracking)
+  $$G_t = R_{t+1} + R_{t+2} + R_{t+3} + \dots = \sum_{k=0}^{\infty} R_{t+k+1}$$
+
+## The Need for Discounting {.smaller}
+* **The Infinite Horizon Problem:** If an agent receives a steady stream of positive rewards forever ($R_t = 1$), then $G_t = \infty$.
+* An infinite sum prevents us from mathematically ranking alternative pathways since $\infty = \infty$.
+* **The Solution:** Introduce a **discount factor $\gamma \in [0, 1)$** to guarantee that the sequence converges to a finite value:
+  $$G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}$$
+
+## Economic Intuition of the Discount Factor ($\gamma$) {.smaller}
+$$\sum_{k=0}^{\infty} \gamma^k R_{t+k+1}$$
+
+* **Time Preference:** Maps directly to the subjective discount factor or discount rate in intertemporal consumption models ($\frac{1}{1 + \rho}$).
+* **Risk/Uncertainty:** Can be interpreted as modeling a constant probability $(1 - \gamma)$ that the economic environment unexpectedly terminates or experiences bankruptcy at any given step.
+* **Bounded Focus:** * If $\gamma \to 0$, the agent becomes purely myopic (greedy, short-sighted).
+  * If $\gamma \to 1$, the agent becomes completely patient, weighing distant future outcomes heavily.
+
+## Interactive Element: Concept Check 1
+::: {.callout-tip}
+### Übungsaufgabe 1: Calculating Returns (2 Minutes)
+Imagine an agent is in an infinite-horizon task. Starting at time step $t$, the agent receives a constant reward of $R = 10$ at every single future time step. 
+
+If the environment's discount factor is set to $\gamma = 0.9$, what is the exact numerical value of the discounted expected return $G_t$? 
+
+*Hint: Use the formula for an infinite geometric series sequence.*
+:::
+
+## Solution to Concept Check 1 {.smaller}
+* **The Formula:**
+  $$G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} = R \sum_{k=0}^{\infty} \gamma^k$$
+* **The Convergence Rule:** For any $\gamma \in [0, 1)$, the infinite sum collapses to $\frac{1}{1-\gamma}$.
+* **The Calculation:**
+  $$G_t = 10 \times \left( \frac{1}{1 - 0.9} \right) = 10 \times \left( \frac{1}{0.1} \right) = 10 \times 10 = 100$$
+* **Takeaway:** The total discounted future worth of this state stream is bound exactly at $100$.
+
+## The State-Value Function $v_\pi(s)$ {.smaller}
+* A state does not possess absolute intrinsic value; its worth depends entirely on how the agent chooses to behave moving forward.
+* Given a behavioral **Policy ($\pi$)**, which maps states to a probability distribution over actions: $\pi(a \mid s) = \mathbb{P}(A_t = a \mid S_t = s)$.
+* The **State-Value Function ($v_\pi(s)$)** is the *expected return* when starting in state $s$ and following policy $\pi$ thereafter:
+  $$v_\pi(s) = \mathbb{E}_\pi \left[ G_t \mid S_t = s \right]$$
+* **Economic Analogy:** This is the direct equivalent of calculating the **Net Present Value (NPV)** of an asset given an established institutional policy or operational decision rule.
+
+## The Action-Value Function $q_\pi(s, a)$ {.smaller}
+* To optimize behavior, an agent must evaluate specific policy deviations.
+* The **Action-Value Function ($q_\pi(s, a)$)** calculates the expected return of taking an arbitrary action $a$ in state $s$, and *then* reverting back to policy $\pi$ for all subsequent steps:
+  $$q_\pi(s, a) = \mathbb{E}_\pi \left[ G_t \mid S_t = s, A_t = a \right]$$
+* **The Connection:** If you average all possible $q$-values across the probability weights of your policy, you return to the state-value:
+  $$v_\pi(s) = \sum_{a \in \mathcal{A}} \pi(a \mid s) q_\pi(s, a)$$
+
+# Section 3: The Bellman Equation
+
+## Factoring Out Eternity {.smaller}
+* Richard Bellman’s major conceptual leap was realizing that infinite sequences can be broken down recursively into a single-step relationship.
+* Let's mathematically factor our return metric ($G_t$):
+  $$
+  \begin{aligned}
+  G_t &= R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \gamma^3 R_{t+4} + \dots \\
+  &= R_{t+1} + \gamma \left( R_{t+2} + \gamma R_{t+3} + \gamma^2 R_{t+4} + \dots \right) \\
+  &= R_{t+1} + \gamma G_{t+1}
+  \end{aligned}
+  $$
+* *The Intuition:* Long-term value is simply **what you earn on this step** plus **the discounted value of everything that happens from the next step onward**.
+
+## Deriving the Bellman Expectation Equation {.smaller}
+* We substitute our factored version of $G_t$ back into our definition for $v_\pi(s)$:
+  $$
+  \begin{aligned}
+  v_\pi(s) &= \mathbb{E}_\pi \left[ G_t \mid S_t = s \right] \\
+  &= \mathbb{E}_\pi \left[ R_{t+1} + \gamma G_{t+1} \mid S_t = s \right] \\
+  &= \mathbb{E}_\pi \left[ R_{t+1} + \gamma v_\pi(S_{t+1}) \mid S_t = s \right]
+  \end{aligned}
+  $$
+* Now, expanding this expectation operator across the policy distribution ($\pi$) and environmental dynamics function ($p$) as required by **Reinforcement Learning: An Introduction**:
+  $$v_\pi(s) = \sum_{a \in \mathcal{A}} \pi(a \mid s) \sum_{s' \in \mathcal{S}} \sum_{r \in \mathcal{R}} p(s', r \mid s, a) \left[ r + \gamma v_\pi(s') \right]$$
+
+## Deciphering the Blueprint {.smaller}
+$$v_\pi(s) = \sum_{a \in \mathcal{A}} \pi(a \mid s) \sum_{s' \in \mathcal{S}} \sum_{r \in \mathcal{R}} p(s', r \mid s, a) \left[ r + \gamma v_\pi(s') \right]$$
+
+* $\pi(a \mid s)$: The probability that you choose action $a$ when in state $s$.
+* $p(s', r \mid s, a)$: The probability that the environment transitions to state $s'$ and gives reward $r$, given action $a$ in state $s$.
+* $r$: The immediate short-term reward you pick up along that specific transition.
+* $\gamma v_\pi(s')$: The discounted long-term value of starting fresh in the destination state $s'$.
+
+## Why Is This Central to RL? {.smaller}
+1. **Local Optimization:** It collapses an infinite-horizon prediction problem into a local, single-step recursive lookup.
+2. **Formulation of Systems:** If your total state space is small, Bellman expectation equations form a clean system of linear equations with $|\mathcal{S}|$ equations. It can be solved exactly via matrix inversion:
+   $$v_\pi = R_\pi + \gamma P_\pi v_\pi \implies v_\pi = (I - \gamma P_\pi)^{-1} R_\pi$$
+3. **Bootstrapping:** It enables algorithms to update current state value estimates using predictions of future state values without waiting until the end of time.
+
+## The Bellman Optimality Equation {.smaller}
+* Our true objective is control: finding the **Optimal Policy $\pi^*$** that maximizes our expected return.
+* The optimal state-value function is defined as $v^*(s) = \max_\pi v_\pi(s)$.
+* Under an optimal policy, an agent doesn't take a weighted average of actions; it always selects the absolute best path. We replace $\sum_a \pi$ with a maximization operator:
+  $$v^*(s) = \max_{a \in \mathcal{A}} \sum_{s' \in \mathcal{S}} \sum_{r \in \mathcal{R}} p(s', r \mid s, a) \left[ r + \gamma v^*(s') \right]$$
+* **The Non-Linear Catch:** Because of the $\max$ operator, this system of equations is **non-linear**. We cannot use simple linear algebra to invert it; we must solve it using iterative numerical methods like Dynamic Programming.
+
+# Section 4: Monte Carlo Methods
+
+## The Structural Modeling Barrier {.smaller}
+* Direct solution of the Bellman equation via **Dynamic Programming** requires knowing the true transition dynamics and reward joint distributions $p(s', r \mid s, a)$.
+* **The Econometric Reality:** Economists rarely know the true structural laws of the economy. 
+  * *What is the exact mathematical transition matrix of consumer behavior?*
+  * *What is the true transition density of stock market fluctuations?*
+* **The Solution:** If the model of the world is unknown, we must learn **Model-Free** directly from empirical **Experience**.
+
+## The Philosophy of Monte Carlo (MC) Learning {.smaller}
+* Monte Carlo methods solve the valuation problem by replacing complex theoretical expectations with **empirical sample averages**.
+* The agent interacts with the environment, generating a series of full, completed historical trajectories called **episodes**:
+  $$S_0, A_0, R_1, S_1, A_1, R_2, \dots, S_{T-1}, A_{T-1}, R_T, S_T$$
+* For every state $s$ visited during this track, we record the actual, realized subsequent return $G_t$.
+* By the **Law of Large Numbers**, as the number of independent episodes approaches infinity, the sample average converges to the true expected value.
+
+## First-Visit vs. Every-Visit Tracking {.smaller}
+* When tracking historical episodes, a specific state $s$ might be visited multiple times within a single loop.
+* **First-Visit MC:** Only averages the empirical returns following the *very first time* the agent encountered state $s$ during that specific run. This guarantees strictly independent, mathematically unbiased tracking.
+* **Every-Visit MC:** Tracks and averages the returns of *all* visits to state $s$ within the episode. Though it introduces sample dependency (bias) within a single run, it utilizes data more efficiently and converges cleanly over time.
+
+## Learning from Experience: The Incremental Update Rule {.smaller}
+* **The Problem**: Storing every single historical return path is impossible for large problems. Need to learn "on the fly.
+* Instead agent updates beliefs like a human making a forecast. Takes current guess and nudges it in direction of "surprise" (error) it just experienced. Is also called the **Incremental Update Rule**:
+  $$\text{New Estimate} = \text{Old Estimate} + \text{Step Size} \times \text{(Target - Old Estimate)}$$
+
+* **Deconstructing the Elements:**
+  * **The "Target":** What actually happened (The realization).
+  * **The "Old Estimate:** What we expected to happen (Our prior).
+  * **The "Error"(Target-Old est.):** The surprise; how far prior was from reality.
+  * **The "Step Size":** In economics, this mirrors Adaptive Expectations, where forecasts adjust based on past errors.
+
+## Methodological Trade-offs of Monte Carlo {.smaller}
+::: {.columns}
+::: {.column width="50%"}
+### Advantages
+* **Purely Model-Free:** Requires zero knowledge of environment transition dynamics or physics.
+* **No Bootstrapping:** Estimates are independent of other estimates. An error in evaluating state B does not systematically corrupt state A.
+:::
+::: {.column width="50%"}
+### Disadvantages
+* **Strictly Episodic:** Can only apply updates *after* an episode hits a terminal state. Cannot easily evaluate ongoing infinite-horizon processes.
+* **High Variance:** Realized returns are affected by a long chain of random outcomes, slowing down convergence.
+:::
+:::
+
+# Section 5: Concrete Economic Application
+
+## The Intertemporal Lifecycle Problem {.smaller}
+* Let's anchor these mathematical abstractions into a core economic foundation: **The Merton Lifecycle Savings and Investment Model**.
+* **The Core Question:** How should an individual allocate their cash between continuous immediate consumption and structural portfolio investment across their working life to maximize total lifetime utility?
+
+## Translating Finance into an MDP {.smaller}
+* **State Space ($S_t$): A multi-dimensional continuous vector:**
+  * Current net wealth ($W_t \in \mathbb{R}^+$)
+  * Current market environment status (e.g., High Volatility vs. Steady Growth)
+* **Action Space ($A_t$): A continuous decision matrix:**
+  * Consumption level ($c_t \le W_t$)
+  * Portfolio split ($\omega_t$): Percent of savings in risky equities vs. risk-free treasury bonds
+* **Reward Function ($R_{t+1}$):** Standard economic utility, such as Constant Relative Risk Aversion (CRRA):
+  $$\mathcal{U}(c_t) = \frac{c_t^{1-\sigma}}{1-\sigma}$$
+
+## Bypassing Structural Constraints with RL {.smaller}
+* **Problem:** If we add complex real-world frictions like transaction fees, progressive income tax brackets, random job lay-offs, and borrowing constraints, solving this with traditional calculus becomes impossible.
+* **RL Approach:** An agent learns purely by running thousands of automated **Monte Carlo lifetime simulations**:
+  1. An agent starts at age 20 and tests random saving plans.
+  2. If the agent overconsumes early on, the simulation hits a "poverty state" in late retirement periods, resulting in very low rewards.
+  3. The **Monte Carlo Return ($G_t$)** registers this future penalty and lowers the $q$-value (Action-value funct.!) of overconsuming at age 25.
+
+## Lecture Summary: The Connected Picture {.smaller}
+* **The Value Function** maps out your long-term expected welfare or financial safety cushion across different life situations.
+* **The Bellman Equation** ensures that any rational intertemporal plan must balance the value of eating today with the discounted expectation of your asset pool tomorrow.
+* **Monte Carlo Methods** give us a toolkit to numerically compute these optimal economic behaviors organically from data and simulation, completely freeing us from having to assume we know the perfect exact mathematical equations of the real world.
