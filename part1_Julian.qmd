@@ -1,14 +1,3 @@
----
-title: "Introduction to Reinforcement Learning"
-subtitle: "Machine Learning for Economists"
-author: "Felix Feber & Julian Mensak"
-format: 
-  beamer:
-    theme: Madrid
-    navigation: horizontal
-    slide-level: 2
----
-
 ## What did we learn so far?
 
 Throughout the course, we explored two main paradigms:
